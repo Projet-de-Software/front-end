@@ -1,16 +1,7 @@
-# pomodoro_app
+# Pomodoro / Flashcards App
 
-A new Flutter project.
+## Descrição
+Este é um aplicativo focado em aumentar a produtividade dos usuários para estudar, com sistema que monitora quanto tempo o usuário gasta em outros apps, flashcards, relógio pomodoro, calendário para usuário fazer cronograma de estudos
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Figma Projeto
+[Figma](https://www.figma.com/design/guJvNyIxCwklrAJAK1orTW/Projeto-de-Software?node-id=0-1&t=YoHRARP1q6rw1bYG-1)
