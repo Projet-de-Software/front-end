@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/flashcards_view_model.dart';
 import 'package:pomodoro_app/feature/home/presentation/widgets/flashcards/flashcard_component.dart';
+import 'package:pomodoro_app/feature/home/presentation/widgets/flashcards/next_or_previous_flashcard.dart';
 
 class FlashcardsView extends StatelessWidget {
   const FlashcardsView({super.key});
@@ -35,28 +36,7 @@ class FlashcardsView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    onPressed: controller.previousCard,
-                    icon: const Icon(Icons.arrow_back_ios, size: 30),
-                  ),
-                  IconButton(
-                    onPressed: controller.toggleAnswer,
-                    icon: Icon(
-                      controller.showAnswer.value
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      size: 30,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: controller.nextCard,
-                    icon: const Icon(Icons.arrow_forward_ios, size: 30),
-                  ),
-                ],
-              ),
+              NextOrPreviousFlashcard(controller: controller),
             ],
           );
         }),
