@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pomodoro_app/core/consts/app_colors.dart';
+import 'package:pomodoro_app/feature/home/presentation/view/calendar_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/flashcards_view.dart';
+import 'package:pomodoro_app/feature/home/presentation/view/monitoramento_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/pomodoro_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/home_view_model.dart';
 // Importe as views para as outras páginas aqui, se existirem (ex: import '../tasks/view/tasks_view.dart';)
@@ -17,21 +19,21 @@ class HomeView extends StatelessWidget {
     final List<String> icons = [
       'assets/icons/home.svg',
       'assets/icons/flashcards.svg',
-      'assets/icons/calendar.svg',
       'assets/icons/monitoramento.svg',
+      'assets/icons/calendar.svg',
       'assets/icons/user.svg',
       'assets/icons/home_select.svg',
       'assets/icons/flashcard_select.svg',
-      'assets/icons/calendar_select.svg',
       'assets/icons/monitoramento_select.svg',
+      'assets/icons/calendar_select.svg',
       'assets/icons/user_select.svg',
     ];
 
     final List<String> appBarTitles = [
       'Pomodoro',
       'FlashCards',
-      'Calendário',
       'Monitoramento',
+      'Calendário',
       'Perfil',
     ];
 
@@ -39,8 +41,8 @@ class HomeView extends StatelessWidget {
     final List<Widget> pages = [
       const PomodoroView(),
       const FlashcardsView(),
-      const Center(child: Text('Página do Pomodoro')),
-      const Center(child: Text('Página do Calendário')),
+      const MonitoramentoView(),
+      const CalendarView(),
       const Center(child: Text('Página do Perfil')),
     ];
 
@@ -105,7 +107,7 @@ class HomeView extends StatelessWidget {
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 icons[2],
-                semanticsLabel: 'Calendar',
+                semanticsLabel: 'Monitor',
                 colorFilter: const ColorFilter.mode(
                   Colors.white,
                   BlendMode.srcIn,
@@ -113,18 +115,18 @@ class HomeView extends StatelessWidget {
               ),
               activeIcon: SvgPicture.asset(
                 icons[7],
-                semanticsLabel: 'Calendar Selected',
+                semanticsLabel: 'Monitoramento Selected',
                 colorFilter: const ColorFilter.mode(
                   Color(0xFFC8E6C9),
                   BlendMode.srcIn,
                 ),
               ),
-              label: 'Calendário',
+              label: 'Monitor',
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 icons[3],
-                semanticsLabel: 'Monitoramento',
+                semanticsLabel: 'Calendar',
                 colorFilter: const ColorFilter.mode(
                   Colors.white,
                   BlendMode.srcIn,
@@ -132,13 +134,13 @@ class HomeView extends StatelessWidget {
               ),
               activeIcon: SvgPicture.asset(
                 icons[8],
-                semanticsLabel: 'Monitoramento Selected',
+                semanticsLabel: 'Calendar Selected',
                 colorFilter: const ColorFilter.mode(
                   Color(0xFFC8E6C9),
                   BlendMode.srcIn,
                 ),
               ),
-              label: 'Monitoramento',
+              label: 'Calendário',
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(

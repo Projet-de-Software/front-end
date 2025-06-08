@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pomodoro_app/core/consts/app_route.dart';
 import 'package:pomodoro_app/core/theme/theme_app.dart';
+import 'package:pomodoro_app/feature/home/presentation/view/flashcards_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/home_view.dart';
+import 'package:pomodoro_app/feature/home/presentation/view/monitoramento_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/pomodoro_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/home_view_model.dart';
 
@@ -22,6 +24,11 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: AppRoute.home, page: () => HomeView()),
         GetPage(name: AppRoute.pomodoro, page: () => PomodoroView()),
+        GetPage(name: AppRoute.flashcards, page: () => FlashcardsView()),
+        GetPage(
+          name: AppRoute.monitoramento,
+          page: () => MonitoramentoView(),
+        ),
       ],
     );
   }
