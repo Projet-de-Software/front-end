@@ -5,6 +5,7 @@ import 'package:pomodoro_app/core/consts/app_colors.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/calendar_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/flashcards_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/monitoramento_view.dart';
+import 'package:pomodoro_app/feature/home/presentation/view/perfil_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/pomodoro_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/home_view_model.dart';
 // Importe as views para as outras páginas aqui, se existirem (ex: import '../tasks/view/tasks_view.dart';)
@@ -43,7 +44,7 @@ class HomeView extends StatelessWidget {
       const FlashcardsView(),
       const MonitoramentoView(),
       const CalendarView(),
-      const Center(child: Text('Página do Perfil')),
+      const PerfilView(),
     ];
 
     return Scaffold(
@@ -51,7 +52,8 @@ class HomeView extends StatelessWidget {
         title: Obx(
           () => Text(
             appBarTitles[controller.currentIndex.value],
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style:
+                const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
       ),

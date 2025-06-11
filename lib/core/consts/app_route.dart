@@ -7,5 +7,5 @@ class AppRoute {
   static const String flashcards = '/flashcards';
   static const String monitoramento = '/monitoramento';
   static const String calendario = '/calendario';
-  static const String user = '/user';
+  static const String perfil = '/perfil';
 }
