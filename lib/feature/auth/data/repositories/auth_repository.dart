@@ -38,6 +38,7 @@ class AuthRepository {
         final prefs = await _prefs;
         await prefs.setString('token', data['token']);
         await prefs.setString('user', jsonEncode(data['data']));
+        await prefs.setString('userId', data['data']['id']);
       }
 
       return data;
@@ -83,6 +84,7 @@ class AuthRepository {
         final prefs = await _prefs;
         await prefs.setString('token', data['token']);
         await prefs.setString('user', jsonEncode(data['data']));
+        await prefs.setString('userId', data['data']['id']);
       }
 
       return data;
@@ -100,11 +102,17 @@ class AuthRepository {
     final prefs = await _prefs;
     await prefs.remove('token');
     await prefs.remove('user');
+    await prefs.remove('userId');
   }
 
   Future<String?> getToken() async {
     final prefs = await _prefs;
     return prefs.getString('token');
+  }
+
+  Future<String?> getUserId() async {
+    final prefs = await _prefs;
+    return prefs.getString('userId');
   }
 
   Future<UserModel?> getUser() async {

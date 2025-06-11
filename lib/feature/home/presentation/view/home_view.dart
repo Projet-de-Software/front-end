@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pomodoro_app/core/consts/app_colors.dart';
+import 'package:pomodoro_app/core/consts/app_route.dart';
+import 'package:pomodoro_app/feature/auth/data/repositories/auth_repository.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/calendar_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/flashcards_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/monitoramento_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/perfil_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/pomodoro_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/home_view_model.dart';
+import 'package:pomodoro_app/feature/home/presentation/viewmodel/flashcards_list_viewmodel.dart';
 // Importe as views para as outras páginas aqui, se existirem (ex: import '../tasks/view/tasks_view.dart';)
 
 class HomeView extends StatelessWidget {
@@ -16,6 +19,12 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<HomeViewModel>();
+    final authRepository = Get.find<AuthRepository>();
+
+    // Registra o FlashcardsListViewModel se ainda não estiver registrado
+    if (!Get.isRegistered<FlashcardsListViewModel>()) {
+      Get.put(FlashcardsListViewModel(authRepository));
+    }
 
     final List<String> icons = [
       'assets/icons/home.svg',
@@ -56,6 +65,29 @@ class HomeView extends StatelessWidget {
                 const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
+        actions: [
+          Obx(() {
+            if (controller.currentIndex.value == 1) {
+              return Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.list),
+                    onPressed: () => Get.toNamed(AppRoute.flashcardsList),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      final flashcardsController =
+                          Get.find<FlashcardsListViewModel>();
+                      flashcardsController.showAddFlashcardDialog();
+                    },
+                  ),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+        ],
       ),
       body: Obx(
         () => IndexedStack(
