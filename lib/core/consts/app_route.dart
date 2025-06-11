@@ -9,4 +9,5 @@ class AppRoute {
   static const String monitoramento = '/monitoramento';
   static const String calendario = '/calendario';
   static const String perfil = '/perfil';
+  static const String calendar = '/calendar';
 }

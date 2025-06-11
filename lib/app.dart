@@ -7,12 +7,14 @@ import 'package:pomodoro_app/feature/auth/presentation/view/login_view.dart';
 import 'package:pomodoro_app/feature/auth/presentation/view/signup_view.dart';
 import 'package:pomodoro_app/feature/auth/presentation/viewmodels/login_viewmodel.dart';
 import 'package:pomodoro_app/feature/auth/presentation/viewmodels/signup_viewmodel.dart';
+import 'package:pomodoro_app/feature/home/presentation/view/calendar_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/flashcards_list_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/flashcards_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/home_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/monitoramento_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/perfil_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/pomodoro_view.dart';
+import 'package:pomodoro_app/feature/home/presentation/viewmodel/calendar_view_model.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/home_view_model.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/perfil_viewmodel.dart';
 
@@ -28,6 +30,7 @@ class MyApp extends StatelessWidget {
     Get.put(LoginViewModel(authRepository));
     Get.put(SignupViewModel(authRepository));
     Get.put(PerfilViewModel(authRepository));
+    Get.put(CalendarViewModel(authRepository));
 
     return GetMaterialApp(
       title: 'Pomodoro App',
@@ -46,6 +49,7 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: AppRoute.monitoramento, page: () => MonitoramentoView()),
         GetPage(name: AppRoute.perfil, page: () => const PerfilView()),
+        GetPage(name: AppRoute.calendar, page: () => const CalendarView()),
       ],
     );
   }

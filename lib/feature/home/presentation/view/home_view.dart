@@ -11,6 +11,8 @@ import 'package:pomodoro_app/feature/home/presentation/view/perfil_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/pomodoro_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/home_view_model.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/flashcards_list_viewmodel.dart';
+import 'package:pomodoro_app/feature/home/presentation/widgets/tasks/add_task_modal.dart';
+import 'package:pomodoro_app/feature/home/presentation/viewmodel/calendar_view_model.dart';
 // Importe as views para as outras páginas aqui, se existirem (ex: import '../tasks/view/tasks_view.dart';)
 
 class HomeView extends StatelessWidget {
@@ -83,6 +85,24 @@ class HomeView extends StatelessWidget {
                     },
                   ),
                 ],
+              );
+            } else if (controller.currentIndex.value == 3) {
+              return IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => Padding(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                      ),
+                      child: AddTaskModal(
+                        viewModel: Get.find<CalendarViewModel>(),
+                      ),
+                    ),
+                  );
+                },
               );
             }
             return const SizedBox.shrink();

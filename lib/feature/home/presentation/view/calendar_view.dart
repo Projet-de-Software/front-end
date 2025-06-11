@@ -3,186 +3,194 @@ import 'package:get/get.dart';
 import 'package:pomodoro_app/core/consts/app_colors.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/calendar_view_model.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:pomodoro_app/feature/home/presentation/widgets/tasks/edit_task_modal.dart';
 
 class CalendarView extends StatelessWidget {
   const CalendarView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final CalendarViewModel controller = Get.put(CalendarViewModel());
+    final controller = Get.find<CalendarViewModel>();
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 8.0,
-          horizontal: 16.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Obx(
-              () => TableCalendar(
-                focusedDay: controller.focusedDay.value,
-                firstDay: DateTime.utc(2020, 1, 1),
-                lastDay: DateTime.utc(2030, 12, 31),
-                selectedDayPredicate: (day) =>
-                    isSameDay(controller.selectedDay.value, day),
-                onDaySelected: controller.onDaySelected,
-                onPageChanged: controller.onPageChanged,
-                eventLoader: controller.getEventsForDay,
-                calendarFormat: CalendarFormat.month,
-                headerStyle: HeaderStyle(
-                  formatButtonVisible: false,
-                  titleCentered: false,
-                  titleTextStyle: TextStyle(
-                    color: AppColors.secondColor,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  leftChevronIcon: Icon(
-                    Icons.arrow_back_ios,
-                    color: AppColors.secondColor,
-                    size: 20,
-                  ),
-                  rightChevronIcon: Icon(
-                    Icons.arrow_forward_ios,
-                    color: AppColors.secondColor,
-                    size: 20,
-                  ),
-                  titleTextFormatter: (date, locale) =>
-                      '${_getMonthName(date.month)} ${date.year}',
-                ),
-                calendarStyle: CalendarStyle(
-                  outsideDaysVisible: false,
-                  defaultTextStyle: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                  weekendTextStyle: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                  selectedDecoration: BoxDecoration(
-                    color: AppColors.secondColor,
-                    shape: BoxShape.circle,
-                  ),
-                  todayDecoration: const BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  todayTextStyle: TextStyle(
-                    color: AppColors.secondColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  markerDecoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                daysOfWeekStyle: DaysOfWeekStyle(
-                  weekdayStyle: TextStyle(
-                    color: AppColors.secondColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  weekendStyle: TextStyle(
-                    color: AppColors.secondColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Divider(color: Colors.white.withAlpha(100), thickness: 1),
-            const SizedBox(height: 16),
-            Obx(
-              () => Text(
-                'Dia ${controller.selectedDay.value?.day ?? '--'}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            Obx(
-              () => Expanded(
-                child: ListView.builder(
-                  itemCount: controller.selectedTasks.length,
-                  itemBuilder: (context, index) {
-                    final task = controller.selectedTasks[index];
-                    return _buildTaskItem(
-                      task.title,
-                      task.description,
-                      '${task.date.hour}:${task.date.minute.toString().padLeft(2, '0')} as ${task.date.hour + 1}:${task.date.minute.toString().padLeft(2, '0')}',
-                    ); // Exemplo de tempo
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
 
-  Widget _buildTaskItem(String category, String title, String time) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      if (controller.errorMessage.isNotEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                controller.errorMessage.value,
+                style: const TextStyle(color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: controller.loadTasks,
+                child: const Text('Tentar Novamente'),
+              ),
+            ],
+          ),
+        );
+      }
+
+      return Column(
         children: [
-          Text(
-            '$category - $title',
-            style: TextStyle(
-              color: AppColors.secondColor,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+          TableCalendar(
+            firstDay: DateTime.utc(2024, 1, 1),
+            lastDay: DateTime.utc(2025, 12, 31),
+            focusedDay: controller.focusedDay.value,
+            calendarFormat: CalendarFormat.month,
+            eventLoader: controller.getEventsForDay,
+            selectedDayPredicate: (day) =>
+                isSameDay(controller.selectedDay.value, day),
+            onDaySelected: controller.onDaySelected,
+            onPageChanged: controller.onPageChanged,
+            calendarStyle: const CalendarStyle(
+              markersMaxCount: 1,
+              markerDecoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              defaultTextStyle: TextStyle(
+                color: AppColors.primaryColor,
+              ),
+              weekendTextStyle: TextStyle(
+                color: Color.fromARGB(255, 224, 224, 224),
+              ),
+              outsideDaysVisible: false,
+              todayDecoration: BoxDecoration(
+                color: Colors.transparent,
+              ),
+              todayTextStyle: TextStyle(
+                color: Colors.amber,
+                fontWeight: FontWeight.bold,
+              ),
+              selectedDecoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                shape: BoxShape.circle,
+              ),
+              selectedTextStyle: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            daysOfWeekStyle: const DaysOfWeekStyle(
+              weekdayStyle: TextStyle(
+                color: Color.fromARGB(255, 160, 160, 160),
+                fontWeight: FontWeight.bold,
+              ),
+              weekendStyle: TextStyle(
+                color: Color(0xFF9E9E9E),
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          const SizedBox(height: 5),
-          Text(
-            time,
-            style: TextStyle(
-              color: Colors.white.withAlpha(150),
-              fontSize: 16,
+          const SizedBox(height: 16),
+          Expanded(
+            child: controller.selectedTasks.isEmpty
+                ? const Center(
+                    child: Text('Nenhuma tarefa para este dia'),
+                  )
+                : ListView.builder(
+                    itemCount: controller.selectedTasks.length,
+                    itemBuilder: (context, index) {
+                      final task = controller.selectedTasks[index];
+                      return _buildTaskItem(
+                        context,
+                        controller,
+                        task.title,
+                        task.description,
+                        '${task.date.hour.toString().padLeft(2, '0')}:${task.date.minute.toString().padLeft(2, '0')}',
+                      );
+                    },
+                  ),
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _buildTaskItem(BuildContext context, CalendarViewModel controller,
+      String title, String description, String time) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(50),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppColors.secondTextColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (description.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.secondTextColor,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 4),
+                Text(
+                  time,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ],
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              final task = controller.selectedTasks.firstWhere(
+                (t) => t.title == title && t.description == description,
+                orElse: () => controller.selectedTasks.first,
+              );
+
+              if (context.mounted) {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: EditTaskModal(
+                      viewModel: controller,
+                      task: task,
+                    ),
+                  ),
+                );
+              }
+            },
           ),
         ],
       ),
     );
-  }
-
-  String _getMonthName(int month) {
-    switch (month) {
-      case 1:
-        return 'Janeiro';
-      case 2:
-        return 'Fevereiro';
-      case 3:
-        return 'Março';
-      case 4:
-        return 'Abril';
-      case 5:
-        return 'Maio';
-      case 6:
-        return 'Junho';
-      case 7:
-        return 'Julho';
-      case 8:
-        return 'Agosto';
-      case 9:
-        return 'Setembro';
-      case 10:
-        return 'Outubro';
-      case 11:
-        return 'Novembro';
-      case 12:
-        return 'Dezembro';
-      default:
-        return '';
-    }
   }
 }
