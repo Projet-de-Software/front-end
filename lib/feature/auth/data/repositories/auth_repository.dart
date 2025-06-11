@@ -51,6 +51,51 @@ class AuthRepository {
     }
   }
 
+  Future<Map<String, dynamic>> signup(
+      String username, String password) async {
+    try {
+      print('Enviando requisição para: $baseUrl/auth/register');
+      print('Body: {"username": "$username", "password": "$password"}');
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+        }),
+      );
+
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode != 200) {
+        return {
+          'error': true,
+          'message':
+              'Erro na comunicação com o servidor: ${response.statusCode}',
+        };
+      }
+
+      final data = jsonDecode(response.body);
+
+      if (data['error'] == false) {
+        final prefs = await _prefs;
+        await prefs.setString('token', data['token']);
+        await prefs.setString('user', jsonEncode(data['data']));
+      }
+
+      return data;
+    } catch (e, stackTrace) {
+      print('Erro detalhado: $e');
+      print('Stack trace: $stackTrace');
+      return {
+        'error': true,
+        'message': 'Erro ao realizar cadastro: $e',
+      };
+    }
+  }
+
   Future<void> logout() async {
     final prefs = await _prefs;
     await prefs.remove('token');

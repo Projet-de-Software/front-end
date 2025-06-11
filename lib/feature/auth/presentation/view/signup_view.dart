@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pomodoro_app/core/consts/app_route.dart';
 import 'package:pomodoro_app/feature/auth/presentation/widgets/custom_buttom.dart';
 import 'package:pomodoro_app/feature/auth/presentation/widgets/custom_text_field_login.dart';
 import '../../../../core/consts/app_colors.dart';
-import '../viewmodels/login_viewmodel.dart';
+import '../viewmodels/signup_viewmodel.dart';
 
-class LoginView extends GetView<LoginViewModel> {
-  const LoginView({super.key});
+class SignupView extends GetView<SignupViewModel> {
+  const SignupView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class LoginView extends GetView<LoginViewModel> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    'Bem-vindo ao\nFocus App',
+                    'Criar Conta',
                     style: TextStyle(
                       color: AppColors.primaryTextColor,
                       fontSize: 32,
@@ -49,14 +48,14 @@ class LoginView extends GetView<LoginViewModel> {
                   const SizedBox(height: 32),
                   CustomButton(
                     controller: controller,
-                    onPressed: controller.login,
-                    text: 'Entrar',
+                    onPressed: controller.signup,
+                    text: 'Cadastrar',
                   ),
                   const SizedBox(height: 16),
                   TextButton(
-                    onPressed: () => Get.toNamed(AppRoute.signup),
+                    onPressed: () => Get.back(),
                     child: const Text(
-                      'Não tem uma conta? Cadastre-se',
+                      'Já tem uma conta? Faça login',
                       style: TextStyle(
                         color: AppColors.primaryColor,
                         fontSize: 16,

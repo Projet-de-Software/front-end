@@ -4,7 +4,9 @@ import 'package:pomodoro_app/core/consts/app_route.dart';
 import 'package:pomodoro_app/core/theme/theme_app.dart';
 import 'package:pomodoro_app/feature/auth/data/repositories/auth_repository.dart';
 import 'package:pomodoro_app/feature/auth/presentation/view/login_view.dart';
+import 'package:pomodoro_app/feature/auth/presentation/view/signup_view.dart';
 import 'package:pomodoro_app/feature/auth/presentation/viewmodels/login_viewmodel.dart';
+import 'package:pomodoro_app/feature/auth/presentation/viewmodels/signup_viewmodel.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/flashcards_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/home_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/monitoramento_view.dart';
@@ -19,6 +21,7 @@ class MyApp extends StatelessWidget {
     // Inicializando os controllers antes da construção do app
     Get.put(HomeViewModel());
     Get.put(LoginViewModel(AuthRepository()));
+    Get.put(SignupViewModel(AuthRepository()));
 
     return GetMaterialApp(
       title: 'Pomodoro App',
@@ -27,6 +30,7 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoute.login,
       getPages: [
         GetPage(name: AppRoute.login, page: () => const LoginView()),
+        GetPage(name: AppRoute.signup, page: () => const SignupView()),
         GetPage(name: AppRoute.home, page: () => HomeView()),
         GetPage(name: AppRoute.pomodoro, page: () => PomodoroView()),
         GetPage(name: AppRoute.flashcards, page: () => FlashcardsView()),
