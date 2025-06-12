@@ -75,6 +75,9 @@ class HomeView extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.list),
                     onPressed: () {
+                      final flashcardsController =
+                          Get.find<FlashcardsListViewModel>();
+                      flashcardsController.loadFlashcards();
                       Get.to(() => const FlashcardsListView());
                     },
                   ),
