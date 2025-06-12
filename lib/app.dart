@@ -44,18 +44,25 @@ class MyApp extends StatelessWidget {
 
 class InitialBinding extends Bindings {
   @override
-  Future<void> dependencies() async {
-    final prefs = await SharedPreferences.getInstance();
-    Get.put(prefs, permanent: true);
+  void dependencies() {
+    // Inicializa SharedPreferences primeiro
+    Get.putAsync<SharedPreferences>(() async {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs;
+    }, permanent: true);
 
-    final authRepository = AuthRepository(prefs);
-    Get.put(authRepository, permanent: true);
+    // Inicializa AuthRepository
+    Get.put(AuthRepository(Get.find<SharedPreferences>()),
+        permanent: true);
 
-    Get.put(LoginViewModel(authRepository), permanent: true);
-    Get.put(SignupViewModel(authRepository), permanent: true);
-    Get.put(HomeViewModel(authRepository), permanent: true);
-    Get.put(CalendarViewModel(authRepository), permanent: true);
-    Get.put(PerfilViewModel(authRepository), permanent: true);
-    Get.put(FlashcardsListViewModel(authRepository), permanent: true);
+    // Inicializa os ViewModels
+    Get.put(LoginViewModel(Get.find<AuthRepository>()), permanent: true);
+    Get.put(SignupViewModel(Get.find<AuthRepository>()), permanent: true);
+    Get.put(HomeViewModel(Get.find<AuthRepository>()), permanent: true);
+    Get.put(CalendarViewModel(Get.find<AuthRepository>()),
+        permanent: true);
+    Get.put(PerfilViewModel(Get.find<AuthRepository>()), permanent: true);
+    Get.put(FlashcardsListViewModel(Get.find<AuthRepository>()),
+        permanent: true);
   }
 }
