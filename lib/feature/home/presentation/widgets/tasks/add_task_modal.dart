@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pomodoro_app/core/consts/app_colors.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/calendar_view_model.dart';
+import 'package:pomodoro_app/feature/home/domain/models/task.dart';
 
 class AddTaskModal extends StatefulWidget {
   final CalendarViewModel viewModel;
@@ -52,11 +53,14 @@ class _AddTaskModalState extends State<AddTaskModal> {
     });
 
     try {
-      await widget.viewModel.addTask(
-        titleController.text,
-        descriptionController.text,
-        selectedDate,
+      final newTask = Task(
+        id: '', // O ID será gerado pelo backend
+        title: titleController.text,
+        description: descriptionController.text,
+        date: selectedDate,
       );
+
+      await widget.viewModel.addTask(newTask);
     } finally {
       if (mounted) {
         setState(() {

@@ -5,7 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
   final String baseUrl = 'https://focusapp-i5j5.onrender.com';
-  final _prefs = SharedPreferences.getInstance();
+  final SharedPreferences _prefs;
+
+  AuthRepository(this._prefs);
 
   Future<Map<String, dynamic>> login(
     String username,
@@ -35,10 +37,9 @@ class AuthRepository {
       final data = jsonDecode(response.body);
 
       if (data['error'] == false) {
-        final prefs = await _prefs;
-        await prefs.setString('token', data['token']);
-        await prefs.setString('user', jsonEncode(data['data']));
-        await prefs.setString('userId', data['data']['id']);
+        await _prefs.setString('token', data['token']);
+        await _prefs.setString('user', jsonEncode(data['data']));
+        await _prefs.setString('userId', data['data']['id']);
       }
 
       return data;
@@ -81,10 +82,9 @@ class AuthRepository {
       final data = jsonDecode(response.body);
 
       if (data['error'] == false) {
-        final prefs = await _prefs;
-        await prefs.setString('token', data['token']);
-        await prefs.setString('user', jsonEncode(data['data']));
-        await prefs.setString('userId', data['data']['id']);
+        await _prefs.setString('token', data['token']);
+        await _prefs.setString('user', jsonEncode(data['data']));
+        await _prefs.setString('userId', data['data']['id']);
       }
 
       return data;
@@ -99,25 +99,21 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
-    final prefs = await _prefs;
-    await prefs.remove('token');
-    await prefs.remove('user');
-    await prefs.remove('userId');
+    await _prefs.remove('token');
+    await _prefs.remove('user');
+    await _prefs.remove('userId');
   }
 
   Future<String?> getToken() async {
-    final prefs = await _prefs;
-    return prefs.getString('token');
+    return _prefs.getString('token');
   }
 
   Future<String?> getUserId() async {
-    final prefs = await _prefs;
-    return prefs.getString('userId');
+    return _prefs.getString('userId');
   }
 
   Future<UserModel?> getUser() async {
-    final prefs = await _prefs;
-    final userJson = prefs.getString('user');
+    final userJson = _prefs.getString('user');
     if (userJson != null) {
       return UserModel.fromJson(jsonDecode(userJson));
     }

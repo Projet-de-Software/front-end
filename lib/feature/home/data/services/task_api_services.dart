@@ -20,6 +20,9 @@ class TaskApiServices implements TaskServices {
         throw Exception('Token ou ID do usuário não encontrado');
       }
 
+      print('Buscando tarefas para o usuário: $userId');
+      print('Token: ${token.substring(0, 10)}...');
+
       final response = await http.get(
         Uri.parse('$baseUrl/user/getAllTasksByIdUser/$userId'),
         headers: {
@@ -28,21 +31,44 @@ class TaskApiServices implements TaskServices {
         },
       );
 
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
-        if (jsonResponse['error'] == true) {
-          throw Exception(jsonResponse['message']);
+      if (response.statusCode == 200) {
+        final String responseBody = response.body;
+        if (responseBody.isEmpty) {
+          return [];
         }
 
-        final List<dynamic> data = jsonResponse['data'];
-        return data.map((json) => Task.fromJson(json)).toList();
+        try {
+          final jsonResponse = json.decode(responseBody);
+          if (jsonResponse['error'] == true) {
+            throw Exception(
+                jsonResponse['message'] ?? 'Erro ao buscar tarefas');
+          }
+
+          final List<dynamic> data = jsonResponse['data'];
+          return data.map((json) => Task.fromJson(json)).toList();
+        } catch (e) {
+          print('Erro ao decodificar resposta: $e');
+          print('Resposta recebida: $responseBody');
+          throw Exception('Erro ao processar resposta do servidor');
+        }
       } else {
-        throw Exception(
-            'Erro ao carregar tarefas: ${response.statusCode}');
+        final String responseBody = response.body;
+        try {
+          final jsonResponse = json.decode(responseBody);
+          final message = jsonResponse['message'] ??
+              'Erro ao buscar tarefas: ${response.statusCode}';
+          throw Exception(message);
+        } catch (e) {
+          throw Exception(
+              'Erro ao buscar tarefas: ${response.statusCode}');
+        }
       }
     } catch (e) {
-      throw Exception('Erro ao carregar tarefas: $e');
+      print('Erro ao buscar tarefas: $e');
+      throw Exception('Erro ao buscar tarefas: $e');
     }
   }
 
@@ -66,6 +92,7 @@ class TaskApiServices implements TaskServices {
           'title': task.title,
           'description': task.description,
           'date': task.date.toIso8601String(),
+          'userId': userId,
         }),
       );
 
@@ -83,9 +110,10 @@ class TaskApiServices implements TaskServices {
   Future<void> updateTask(Task task) async {
     try {
       final token = await _authRepository.getToken();
+      final userId = await _authRepository.getUserId();
 
-      if (token == null) {
-        throw Exception('Token não encontrado');
+      if (token == null || userId == null) {
+        throw Exception('Token ou ID do usuário não encontrado');
       }
 
       final response = await http.put(
@@ -99,6 +127,7 @@ class TaskApiServices implements TaskServices {
           'title': task.title,
           'description': task.description,
           'date': task.date.toIso8601String(),
+          'userId': userId,
         }),
       );
 

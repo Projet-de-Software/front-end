@@ -27,20 +27,27 @@ class CalendarViewModel extends GetxController {
   }
 
   Future<void> loadTasks() async {
-    isLoading.value = true;
-    errorMessage.value = '';
-
     try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final userId = await _authRepository.getUserId();
+      if (userId == null) {
+        throw Exception('ID do usuário não encontrado');
+      }
+
       final tasks = await _service.getTasks();
       allTasks.value = tasks;
       _getTasksForDay(selectedDay.value ?? DateTime.now());
     } catch (e) {
+      print('Erro ao carregar tarefas: $e');
       errorMessage.value = e.toString();
       Get.snackbar(
         'Erro',
         'Não foi possível carregar as tarefas: ${e.toString()}',
-        backgroundColor: const Color(0xffFF0000),
-        colorText: const Color(0xffFFFFFF),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     } finally {
       isLoading.value = false;
@@ -77,64 +84,43 @@ class CalendarViewModel extends GetxController {
     this.focusedDay.value = focusedDay;
   }
 
-  Future<void> addTask(
-      String title, String description, DateTime date) async {
+  Future<void> addTask(Task task) async {
     try {
-      isLoading.value = true;
       final userId = await _authRepository.getUserId();
       if (userId == null) {
         throw Exception('ID do usuário não encontrado');
       }
 
-      final task = Task(
-        id: '', // O ID será gerado pelo backend
-        title: title,
-        description: description,
-        date: date,
-      );
-
       await _service.addTask(task);
-      await loadTasks(); // Recarrega a lista de tarefas
-      Get.back(); // Fecha o modal de adicionar tarefa
-      Get.snackbar(
-        'Sucesso',
-        'Tarefa adicionada com sucesso',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      await loadTasks();
     } catch (e) {
       Get.snackbar(
         'Erro',
-        'Erro ao adicionar tarefa: $e',
+        'Não foi possível adicionar a tarefa: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
   }
 
   Future<void> updateTask(Task task) async {
     try {
-      isLoading.value = true;
+      final userId = await _authRepository.getUserId();
+      if (userId == null) {
+        throw Exception('ID do usuário não encontrado');
+      }
+
       await _service.updateTask(task);
-      await loadTasks(); // Recarrega a lista de tarefas
-      Get.back(); // Fecha o modal de editar tarefa
-      Get.snackbar(
-        'Sucesso',
-        'Tarefa atualizada com sucesso',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      await loadTasks();
     } catch (e) {
       Get.snackbar(
         'Erro',
-        'Erro ao atualizar tarefa: $e',
+        'Não foi possível atualizar a tarefa: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
   }
 }

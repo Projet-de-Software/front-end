@@ -118,7 +118,7 @@ class HomeView extends StatelessWidget {
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
           currentIndex: controller.currentIndex.value,
-          onTap: controller.changePage,
+          onTap: controller.changeIndex,
           items: [
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
