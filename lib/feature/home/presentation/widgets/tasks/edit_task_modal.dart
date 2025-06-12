@@ -143,7 +143,7 @@ class _EditTaskModalState extends State<EditTaskModal> {
               backgroundColor: AppColors.primaryColor,
               padding: const EdgeInsets.symmetric(vertical: 16),
               disabledBackgroundColor:
-                  AppColors.primaryColor.withOpacity(0.5),
+                  AppColors.primaryColor.withAlpha(50),
             ),
             child: isSubmitting
                 ? const SizedBox(

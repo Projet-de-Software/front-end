@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:pomodoro_app/core/consts/app_colors.dart';
-import 'package:pomodoro_app/core/consts/app_route.dart';
 import 'package:pomodoro_app/feature/auth/data/repositories/auth_repository.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/calendar_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/flashcards_list_view.dart';
