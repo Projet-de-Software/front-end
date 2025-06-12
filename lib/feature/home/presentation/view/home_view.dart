@@ -5,6 +5,7 @@ import 'package:pomodoro_app/core/consts/app_colors.dart';
 import 'package:pomodoro_app/core/consts/app_route.dart';
 import 'package:pomodoro_app/feature/auth/data/repositories/auth_repository.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/calendar_view.dart';
+import 'package:pomodoro_app/feature/home/presentation/view/flashcards_list_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/flashcards_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/monitoramento_view.dart';
 import 'package:pomodoro_app/feature/home/presentation/view/perfil_view.dart';
@@ -74,7 +75,9 @@ class HomeView extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.list),
-                    onPressed: () => Get.toNamed(AppRoute.flashcardsList),
+                    onPressed: () {
+                      Get.to(() => const FlashcardsListView());
+                    },
                   ),
                   IconButton(
                     icon: const Icon(Icons.add),

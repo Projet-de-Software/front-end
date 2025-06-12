@@ -75,7 +75,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        color: AppColors.secondColor,
+        color: AppColors.backgroundColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -140,7 +140,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
               backgroundColor: AppColors.primaryColor,
               padding: const EdgeInsets.symmetric(vertical: 16),
               disabledBackgroundColor:
-                  AppColors.primaryColor.withOpacity(0.5),
+                  AppColors.primaryColor.withAlpha(50),
             ),
             child: isSubmitting
                 ? const SizedBox(
@@ -155,7 +155,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
                 : const Text(
                     'Adicionar Tarefa',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.secondTextColor,
                       fontSize: 16,
                     ),
                   ),

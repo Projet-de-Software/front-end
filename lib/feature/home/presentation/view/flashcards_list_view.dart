@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pomodoro_app/core/consts/app_colors.dart';
-import 'package:pomodoro_app/feature/auth/data/repositories/auth_repository.dart';
 import 'package:pomodoro_app/feature/home/presentation/viewmodel/flashcards_list_viewmodel.dart';
 import 'package:pomodoro_app/feature/home/presentation/widgets/flashcards/flashcard_list_item.dart';
 
@@ -10,12 +9,12 @@ class FlashcardsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller =
-        Get.put(FlashcardsListViewModel(Get.find<AuthRepository>()));
+    final controller = Get.find<FlashcardsListViewModel>();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Todos os FlashCards'),
+        backgroundColor: AppColors.backgroundColor,
       ),
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
