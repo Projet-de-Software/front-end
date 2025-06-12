@@ -28,6 +28,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoute.login,
       initialBinding: InitialBinding(),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: child!,
+        );
+      },
       getPages: [
         GetPage(name: AppRoute.login, page: () => const LoginView()),
         GetPage(name: AppRoute.signup, page: () => const SignupView()),
@@ -52,17 +58,18 @@ class InitialBinding extends Bindings {
     }, permanent: true);
 
     // Inicializa AuthRepository
-    Get.put(AuthRepository(Get.find<SharedPreferences>()),
-        permanent: true);
+    final prefs = Get.find<SharedPreferences>();
+    Get.put<AuthRepository>(AuthRepository(prefs), permanent: true);
 
     // Inicializa os ViewModels
-    Get.put(LoginViewModel(Get.find<AuthRepository>()), permanent: true);
-    Get.put(SignupViewModel(Get.find<AuthRepository>()), permanent: true);
-    Get.put(HomeViewModel(Get.find<AuthRepository>()), permanent: true);
-    Get.put(CalendarViewModel(Get.find<AuthRepository>()),
+    final authRepo = Get.find<AuthRepository>();
+    Get.put<LoginViewModel>(LoginViewModel(authRepo), permanent: true);
+    Get.put<SignupViewModel>(SignupViewModel(authRepo), permanent: true);
+    Get.put<HomeViewModel>(HomeViewModel(authRepo), permanent: true);
+    Get.put<CalendarViewModel>(CalendarViewModel(authRepo),
         permanent: true);
-    Get.put(PerfilViewModel(Get.find<AuthRepository>()), permanent: true);
-    Get.put(FlashcardsListViewModel(Get.find<AuthRepository>()),
+    Get.put<PerfilViewModel>(PerfilViewModel(authRepo), permanent: true);
+    Get.put<FlashcardsListViewModel>(FlashcardsListViewModel(authRepo),
         permanent: true);
   }
 }

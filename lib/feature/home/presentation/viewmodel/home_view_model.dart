@@ -9,12 +9,22 @@ class HomeViewModel extends GetxController {
 
   HomeViewModel(this._authRepository);
 
-  void changeIndex(int index) {
+  void changeIndex(int index) async {
     currentIndex.value = index;
 
-    // Se o usuário estiver indo para a tela de calendário (índice 1), carrega as tasks
+    // Se o usuário estiver indo para a tela de calendário (índice 3), carrega as tasks
     if (index == 3) {
-      Get.find<CalendarViewModel>().loadTasks();
+      try {
+        final userId = await _authRepository.getUserId();
+        if (userId != null) {
+          Get.find<CalendarViewModel>().loadTasks();
+        } else {
+          Get.offAllNamed('/login');
+        }
+      } catch (e) {
+        print('Erro ao verificar autenticação: $e');
+        Get.offAllNamed('/login');
+      }
     }
   }
 

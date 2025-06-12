@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:pomodoro_app/feature/auth/data/repositories/auth_repository.dart';
-import 'package:pomodoro_app/feature/home/data/factories/task_services_factory.dart';
+import 'package:pomodoro_app/feature/home/data/services/task_api_services.dart';
 import 'package:pomodoro_app/feature/home/domain/models/task.dart';
 import 'package:pomodoro_app/feature/home/domain/services/task_services.dart';
 
 class CalendarViewModel extends GetxController {
-  final TaskServices _service;
-  final Rx<DateTime> focusedDay = DateTime.now().obs;
-  final Rx<DateTime?> selectedDay = Rx<DateTime?>(DateTime.now());
+  late final TaskServices _taskServices;
+  final RxList<Task> tasks = <Task>[].obs;
   final RxList<Task> selectedTasks = <Task>[].obs;
-  final RxList<Task> allTasks = <Task>[].obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
-  final AuthRepository _authRepository;
+  final Rx<DateTime> focusedDay = DateTime.now().obs;
+  final Rx<DateTime?> selectedDay = Rx<DateTime?>(DateTime.now());
+  final Rx<CalendarFormat> calendarFormat = CalendarFormat.month.obs;
 
-  CalendarViewModel(AuthRepository authRepository)
-      : _service = TaskServicesFactory.create(authRepository),
-        _authRepository = authRepository;
+  CalendarViewModel(AuthRepository authRepository) {
+    _taskServices = TaskApiServices(authRepository);
+  }
 
   @override
   void onInit() {
@@ -27,57 +27,45 @@ class CalendarViewModel extends GetxController {
   }
 
   Future<void> loadTasks() async {
+    isLoading.value = true;
+    errorMessage.value = '';
     try {
-      isLoading.value = true;
-      errorMessage.value = '';
-
-      final userId = await _authRepository.getUserId();
-      if (userId == null) {
-        throw Exception('ID do usuário não encontrado');
-      }
-
-      final tasks = await _service.getTasks();
-      allTasks.value = tasks;
-      _getTasksForDay(selectedDay.value ?? DateTime.now());
+      final loadedTasks = await _taskServices.getTasks();
+      tasks.value = loadedTasks;
+      _updateSelectedTasks();
     } catch (e) {
       print('Erro ao carregar tarefas: $e');
       errorMessage.value = e.toString();
-      Get.snackbar(
-        'Erro',
-        'Não foi possível carregar as tarefas: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      if (e.toString().contains('ID do usuário não encontrado')) {
+        Get.offAllNamed('/login');
+      } else {
+        Get.snackbar(
+          'Erro',
+          'Não foi possível carregar as tarefas: ${e.toString()}',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xffFF0000),
+          colorText: const Color(0xffFFFFFF),
+        );
+      }
     } finally {
       isLoading.value = false;
     }
   }
 
-  void onDaySelected(DateTime day, DateTime focusDay) {
-    if (!isSameDay(selectedDay.value, day)) {
-      selectedDay.value = day;
-      focusedDay.value = focusDay;
-      _getTasksForDay(day);
+  void _updateSelectedTasks() {
+    if (selectedDay.value != null) {
+      selectedTasks.value = getEventsForDay(selectedDay.value!);
     }
   }
 
-  void _getTasksForDay(DateTime day) {
-    selectedTasks.value = allTasks.where((task) {
-      final taskDate = task.date;
-      return taskDate.year == day.year &&
-          taskDate.month == day.month &&
-          taskDate.day == day.day;
-    }).toList();
+  List<Task> getEventsForDay(DateTime day) {
+    return tasks.where((task) => isSameDay(task.date, day)).toList();
   }
 
-  List<Task> getEventsForDay(DateTime day) {
-    return allTasks.where((task) {
-      final taskDate = task.date;
-      return taskDate.year == day.year &&
-          taskDate.month == day.month &&
-          taskDate.day == day.day;
-    }).toList();
+  void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    this.selectedDay.value = selectedDay;
+    this.focusedDay.value = focusedDay;
+    _updateSelectedTasks();
   }
 
   void onPageChanged(DateTime focusedDay) {
@@ -86,12 +74,7 @@ class CalendarViewModel extends GetxController {
 
   Future<void> addTask(Task task) async {
     try {
-      final userId = await _authRepository.getUserId();
-      if (userId == null) {
-        throw Exception('ID do usuário não encontrado');
-      }
-
-      await _service.addTask(task);
+      await _taskServices.addTask(task);
       await loadTasks();
     } catch (e) {
       Get.snackbar(
@@ -106,12 +89,7 @@ class CalendarViewModel extends GetxController {
 
   Future<void> updateTask(Task task) async {
     try {
-      final userId = await _authRepository.getUserId();
-      if (userId == null) {
-        throw Exception('ID do usuário não encontrado');
-      }
-
-      await _service.updateTask(task);
+      await _taskServices.updateTask(task);
       await loadTasks();
     } catch (e) {
       Get.snackbar(

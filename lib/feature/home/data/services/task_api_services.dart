@@ -20,9 +20,6 @@ class TaskApiServices implements TaskServices {
         throw Exception('Token ou ID do usuário não encontrado');
       }
 
-      print('Buscando tarefas para o usuário: $userId');
-      print('Token: ${token.substring(0, 10)}...');
-
       final response = await http.get(
         Uri.parse('$baseUrl/user/getAllTasksByIdUser/$userId'),
         headers: {
@@ -31,40 +28,18 @@ class TaskApiServices implements TaskServices {
         },
       );
 
-      print('Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       if (response.statusCode == 200) {
-        final String responseBody = response.body;
-        if (responseBody.isEmpty) {
-          return [];
-        }
+        final jsonResponse = json.decode(response.body);
 
-        try {
-          final jsonResponse = json.decode(responseBody);
-          if (jsonResponse['error'] == true) {
-            throw Exception(
-                jsonResponse['message'] ?? 'Erro ao buscar tarefas');
-          }
-
-          final List<dynamic> data = jsonResponse['data'];
-          return data.map((json) => Task.fromJson(json)).toList();
-        } catch (e) {
-          print('Erro ao decodificar resposta: $e');
-          print('Resposta recebida: $responseBody');
-          throw Exception('Erro ao processar resposta do servidor');
-        }
-      } else {
-        final String responseBody = response.body;
-        try {
-          final jsonResponse = json.decode(responseBody);
-          final message = jsonResponse['message'] ??
-              'Erro ao buscar tarefas: ${response.statusCode}';
-          throw Exception(message);
-        } catch (e) {
+        if (jsonResponse['error'] == true) {
           throw Exception(
-              'Erro ao buscar tarefas: ${response.statusCode}');
+              jsonResponse['message'] ?? 'Erro ao buscar tarefas');
         }
+
+        final List<dynamic> data = jsonResponse['data'] ?? [];
+        return data.map((json) => Task.fromJson(json)).toList();
+      } else {
+        throw Exception('Erro ao buscar tarefas: ${response.statusCode}');
       }
     } catch (e) {
       print('Erro ao buscar tarefas: $e');
